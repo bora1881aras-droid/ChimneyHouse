@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bella Cucina - Menu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1a1a1a;
+      --accent: #c8963e;
+      --accent-light: #f5dfa8;
+      --bg: #faf8f4;
+      --card: #ffffff;
+      --text: #333;
+      --muted: #888;
+      --border: #ececec;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 40px 20px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(200, 150, 62, 0.25) 0%, transparent 70%);
+    }
+    header .logo {
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      position: relative;
+    }
+    header h1 {
+      font-size: 38px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      position: relative;
+    }
+    header .tagline {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #aaa;
+      font-style: italic;
+      position: relative;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px auto 0;
+      max-width: 200px;
+      position: relative;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+    .divider span {
+      color: var(--accent);
+      font-size: 16px;
+    }
+
+    /* NAV TABS */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--primary);
+      border-bottom: 2px solid var(--accent);
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav button {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: #aaa;
+      padding: 14px 22px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.2s, border-bottom 0.2s;
+      border-bottom: 3px solid transparent;
+      font-family: 'Georgia', serif;
+    }
+    nav button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    nav button:hover { color: white; }
+
+    /* CONTENT */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 30px 16px 60px;
+    }
+
+    .category {
+      display: none;
+    }
+    .category.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .category-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .category-header h2 {
+      font-size: 24px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      color: var(--primary);
+    }
+    .category-header p {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* MENU ITEMS */
+    .menu-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 14px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .menu-item:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    .item-emoji {
+      font-size: 36px;
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+    .item-body { flex: 1; }
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .item-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--primary);
+      letter-spacing: 0.3px;
+    }
+    .item-price {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+    .item-desc {
+      margin-top: 5px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .item-tags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-style: normal;
+      font-family: Arial, sans-serif;
+    }
+    .tag-veg    { background: #e8f5e9; color: #388e3c; }
+    .tag-spicy  { background: #fce4ec; color: #c62828; }
+    .tag-new    { background: #fff8e1; color: #f57f17; }
+    .tag-popular{ background: #ede7f6; color: #512da8; }
+    .tag-gf     { background: #e0f7fa; color: #00838f; }
+
+    /* SECTION LABEL */
+    .section-label {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 32px 0 16px;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--primary);
+      color: #888;
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    footer strong { color: var(--accent); }
+    footer .allergen {
+      margin-top: 10px;
+      font-size: 11px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Est. 2018 &bull; Fine Italian Dining</div>
+  <h1>Bella Cucina</h1>
+  <p class="tagline">Authentic flavors, crafted with love</p>
+  <div class="divider"><span>&#10022;</span></div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="showCategory('starters', this)">Starters</button>
+  <button onclick="showCategory('pasta', this)">Pasta</button>
+  <button onclick="showCategory('mains', this)">Mains</button>
+  <button onclick="showCategory('pizza', this)">Pizza</button>
+  <button onclick="showCategory('desserts', this)">Desserts</button>
+  <button onclick="showCategory('drinks', this)">Drinks</button>
+</nav>
+
+<main>
+
+  <!-- STARTERS -->
+  <section class="category active" id="starters">
+    <div class="category-header">
+      <h2>Antipasti</h2>
+      <p>Small plates to begin your journey</p>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍅</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Bruschetta al Pomodoro</span>
+          <span class="item-price">$9</span>
+        </div>
+        <div class="item-desc">Grilled sourdough topped with heirloom tomatoes, fresh basil, and aged balsamic glaze.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🧀</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Burrata con Prosciutto</span>
+          <span class="item-price">$16</span>
+        </div>
+        <div class="item-desc">Creamy burrata with San Daniele prosciutto, arugula, roasted cherry tomatoes, and truffle oil.</div>
+        <div class="item-tags">
+          <span class="tag tag-new">New</span>
+          <span class="tag tag-gf">Gluten Free</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🦑</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Calamari Fritti</span>
+          <span class="item-price">$14</span>
+        </div>
+        <div class="item-desc">Lightly battered squid rings, flash fried, served with marinara and aioli dipping sauces.</div>
+        <div class="item-tags">
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🥗</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Insalata Caprese</span>
+          <span class="item-price">$13</span>
+        </div>
+        <div class="item-desc">Fresh mozzarella di bufala, heirloom tomatoes, basil oil, fleur de sel, extra virgin olive oil.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-gf">Gluten Free</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PASTA -->
+  <section class="category" id="pasta">
+    <div class="category-header">
+      <h2>La Pasta</h2>
+      <p>Hand-crafted fresh pasta, made daily</p>
+    </div>
+
+    <div class="section-label">Fresh Pasta</div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍝</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Tagliatelle al Ragu</span>
+          <span class="item-price">$24</span>
+        </div>
+        <div class="item-desc">Slow-braised beef and pork ragu, 8-hour Bolognese sauce, fresh egg tagliatelle, Parmigiano.</div>
+        <div class="item-tags">
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🌿</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Ravioli di Ricotta</span>
+          <span class="item-price">$22</span>
+        </div>
+        <div class="item-desc">Ricotta & spinach filled ravioli in a sage brown butter with toasted pine nuts and lemon zest.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-new">New</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Dry Pasta</div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍜</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Spaghetti all'Amatriciana</span>
+          <span class="item-price">$19</span>
+        </div>
+        <div class="item-desc">San Marzano tomatoes, guanciale, Pecorino Romano, black pepper. A Roman classic.</div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🦐</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Linguine allo Scoglio</span>
+          <span class="item-price">$28</span>
+        </div>
+        <div class="item-desc">Mixed seafood — clams, mussels, shrimp, scallops — white wine, garlic, cherry tomatoes, fresh herbs.</div>
+        <div class="item-tags">
+          <span class="tag tag-spicy">Contains Shellfish</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAINS -->
+  <section class="category" id="mains">
+    <div class="category-header">
+      <h2>Secondi Piatti</h2>
+      <p>Main courses to satisfy</p>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🥩</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Bistecca alla Fiorentina</span>
+          <span class="item-price">$58</span>
+        </div>
+        <div class="item-desc">28-day dry-aged Porterhouse (600g), grilled over oak wood, rosemary, garlic butter. Served with roasted potatoes.</div>
+        <div class="item-tags">
+          <span class="tag tag-gf">Gluten Free</span>
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🐟</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Branzino al Forno</span>
+          <span class="item-price">$36</span>
+        </div>
+        <div class="item-desc">Whole oven-roasted Mediterranean sea bass, capers, olives, lemon, fresh herbs, white wine.</div>
+        <div class="item-tags">
+          <span class="tag tag-gf">Gluten Free</span>
+          <span class="tag tag-new">New</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍗</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Pollo al Limone</span>
+          <span class="item-price">$29</span>
+        </div>
+        <div class="item-desc">Pan-seared chicken breast with lemon piccata sauce, capers, white wine reduction, grilled asparagus.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIZZA -->
+  <section class="category" id="pizza">
+    <div class="category-header">
+      <h2>Pizza Napoletana</h2>
+      <p>Wood-fired at 485°C for 90 seconds</p>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Margherita</span>
+          <span class="item-price">$18</span>
+        </div>
+        <div class="item-desc">San Marzano tomato, fior di latte mozzarella, fresh basil, extra virgin olive oil.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Diavola</span>
+          <span class="item-price">$21</span>
+        </div>
+        <div class="item-desc">San Marzano tomato, mozzarella, spicy Calabrian salami, chilli flakes, fresh basil.</div>
+        <div class="item-tags">
+          <span class="tag tag-spicy">Spicy</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Tartufata</span>
+          <span class="item-price">$26</span>
+        </div>
+        <div class="item-desc">White base, mozzarella, mushrooms, black truffle cream, Parmigiano, fresh rocket.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-new">Chef's Special</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Prosciutto e Rucola</span>
+          <span class="item-price">$23</span>
+        </div>
+        <div class="item-desc">Tomato, mozzarella, San Daniele prosciutto, wild arugula, shaved Parmigiano, lemon oil.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESSERTS -->
+  <section class="category" id="desserts">
+    <div class="category-header">
+      <h2>Dolci</h2>
+      <p>A sweet ending to your meal</p>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">☕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Tiramisu</span>
+          <span class="item-price">$12</span>
+        </div>
+        <div class="item-desc">Classic recipe — savoiardi, espresso, Marsala, mascarpone cream, fine cocoa. Made in-house daily.</div>
+        <div class="item-tags">
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍮</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Panna Cotta al Caramello</span>
+          <span class="item-price">$10</span>
+        </div>
+        <div class="item-desc">Vanilla panna cotta with salted caramel, hazelnut praline crumble, seasonal berries.</div>
+        <div class="item-tags">
+          <span class="tag tag-gf">Gluten Free</span>
+          <span class="tag tag-new">New</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍨</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Gelato Artigianale</span>
+          <span class="item-price">$9</span>
+        </div>
+        <div class="item-desc">Three scoops of house-made gelato. Ask your server for today's flavors.</div>
+        <div class="item-tags">
+          <span class="tag tag-veg">Vegetarian</span>
+          <span class="tag tag-gf">Gluten Free</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍫</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Fondente al Cioccolato</span>
+          <span class="item-price">$13</span>
+        </div>
+        <div class="item-desc">Warm 70% dark chocolate lava cake, vanilla bean gelato, raspberry coulis.</div>
+        <div class="item-tags">
+          <span class="tag tag-popular">Popular</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRINKS -->
+  <section class="category" id="drinks">
+    <div class="category-header">
+      <h2>Bevande</h2>
+      <p>Wine, cocktails & more</p>
+    </div>
+
+    <div class="section-label">Vini</div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍷</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Chianti Classico DOCG</span>
+          <span class="item-price">$14 / $52</span>
+        </div>
+        <div class="item-desc">Sangiovese-led Tuscan red. Cherry, leather, dried herbs. Glass / Bottle.</div>
+        <div class="item-tags"><span class="tag tag-gf">Gluten Free</span></div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🥂</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Prosecco Superiore DOCG</span>
+          <span class="item-price">$12 / $46</span>
+        </div>
+        <div class="item-desc">Valdobbiadene Prosecco. Fine bubbles, apple, white peach, floral notes. Glass / Bottle.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Cocktails</div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍋</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Limoncello Spritz</span>
+          <span class="item-price">$15</span>
+        </div>
+        <div class="item-desc">House limoncello, Prosecco, soda, fresh lemon, basil leaf.</div>
+        <div class="item-tags"><span class="tag tag-popular">Popular</span></div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🍊</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Negroni</span>
+          <span class="item-price">$17</span>
+        </div>
+        <div class="item-desc">Campari, Martini Rosso, gin, fresh orange peel. Classic Italian aperitivo.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Soft Drinks</div>
+
+    <div class="menu-item">
+      <div class="item-emoji">🫧</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">San Pellegrino / Still Water</span>
+          <span class="item-price">$5</span>
+        </div>
+        <div class="item-desc">750ml bottle.</div>
+        <div class="item-tags"><span class="tag tag-veg">Vegetarian</span><span class="tag tag-gf">Gluten Free</span></div>
+      </div>
+    </div>
+
+    <div class="menu-item">
+      <div class="item-emoji">☕</div>
+      <div class="item-body">
+        <div class="item-top">
+          <span class="item-name">Espresso / Doppio</span>
+          <span class="item-price">$4 / $6</span>
+        </div>
+        <div class="item-desc">Single-origin blend, roasted in Naples. Served with a lemon peel and sparkling water.</div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <strong>Bella Cucina</strong><br>
+  Via Roma 12, New York &bull; +1 (212) 555-0198<br>
+  Open daily 12:00 – 23:00
+  <div class="allergen">
+    Please inform your server of any allergies or dietary requirements before ordering.<br>
+    All prices include applicable taxes. Gratuity not included.
+  </div>
+</footer>
+
+<script>
+  function showCategory(id, btn) {
+    document.querySelectorAll('.category').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
